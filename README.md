@@ -7,7 +7,7 @@ A simple app to take notes
 - [TypeScript](https://www.typescriptlang.org/)
 - [React](https://react.dev/)
 - [Tailwind](https://tailwindcss.com/)
-- [Vite]([https://expo.dev/](https://vitejs.dev/)
+- [Vite](https://vitejs.dev/)
 
 
 ## 🚀 Getting started
