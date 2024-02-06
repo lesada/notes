@@ -1,5 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
+import { toast } from "sonner";
 import DialogContent from "./DialogContent";
 
 function NewNoteCard() {
@@ -16,7 +17,9 @@ function NewNoteCard() {
   function handleSaveNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    console.log(event.currentTarget.content.value);
+    console.log(event.currentTarget.content?.value || "");
+
+    toast.success("Note saved successfully!");
   }
 
   return (
