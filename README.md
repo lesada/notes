@@ -26,6 +26,6 @@ A simple app to take notes
 
 [Figma](https://www.figma.com/community/file/1336456128647909148/nlw-expert-notes)
 
-### Notes
+### Others
 
 - This project was developed at the Next Level Week - Expert (React Edition)
