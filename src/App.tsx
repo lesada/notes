@@ -1,5 +1,5 @@
 function App() {
-  return <h1>big bang</h1>;
+  return <h1 className="">big bang</h1>;
 }
 
 export default App;
