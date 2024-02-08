@@ -1,6 +1,9 @@
 # Notes
 
-A simple app to take notes
+### A simple app to record and write offline notes
+
+![image](https://github.com/lesada/notes/assets/68572174/3a518de7-38f1-432b-ba61-49c9e44b934c)
+
 
 ## 🧪 Technologies
 
