@@ -5,7 +5,15 @@ import { Note } from "@/interfaces/note";
 import { useState } from "react";
 
 function App() {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [notes, setNotes] = useState<Note[]>(() => {
+    const notesFromLocalStorage = localStorage.getItem("notes");
+
+    if (notesFromLocalStorage) {
+      return JSON.parse(notesFromLocalStorage);
+    }
+
+    return [];
+  });
 
   function onNoteCreated(content: string) {
     const newNote = {
@@ -14,7 +22,27 @@ function App() {
       content,
     };
 
-    setNotes((prevNotes) => [newNote, ...prevNotes]);
+    const notesArray = [newNote, ...notes];
+
+    setNotes(notesArray);
+
+    localStorage.setItem("notes", JSON.stringify(notesArray));
+  }
+
+  function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
+    const search = event.target.value.toLowerCase();
+
+    const notesFromLocalStorage = localStorage.getItem("notes");
+
+    if (notesFromLocalStorage) {
+      const notesArray = JSON.parse(notesFromLocalStorage);
+
+      const filteredNotes = notesArray.filter((note: Note) =>
+        note.content.toLowerCase().includes(search)
+      );
+
+      setNotes(filteredNotes);
+    }
   }
 
   return (
@@ -25,6 +53,7 @@ function App() {
           type="text"
           placeholder="Search inside your notes..."
           className="w-full bg-transparent text-3xl font-semibold tracking-tight placeholder:text-slate-500 outline-none"
+          onChange={handleSearch}
         />
       </form>
       <hr className="border-0 h-px bg-slate-700" />
