@@ -3,8 +3,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import DialogContent from "./DialogContent";
 
-function NewNoteCard() {
+interface NewNoteCardProps {
+  onNoteCreated: (content: string) => void;
+}
+
+function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showEditor, setShowEditor] = useState(false);
 
   function handleStartEditor() {
     setShowOnboarding(false);
@@ -17,14 +22,24 @@ function NewNoteCard() {
   function handleSaveNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    console.log(event.currentTarget.content?.value || "");
+    onNoteCreated(event.currentTarget.content?.value || "");
 
     toast.success("Note saved successfully!");
+
+    event.currentTarget.reset();
+    setShowEditor(false);
+    setShowOnboarding(true);
   }
 
   return (
-    <Dialog.Root onOpenChange={(open) => !open && handleStartEditor}>
-      <Dialog.Trigger className="rounded-md bg-slate-700 p-4 space-y-3 flex flex-col text-start outline-none relative hover:ring-2 hover:ring-slate-600  focus-visible:ring-2 focus-visible:ring-lime-400">
+    <Dialog.Root
+      onOpenChange={(open) => !open && handleStartEditor}
+      open={showEditor}
+    >
+      <Dialog.Trigger
+        className="rounded-md bg-slate-700 p-4 space-y-3 flex flex-col text-start outline-none relative hover:ring-2 hover:ring-slate-600  focus-visible:ring-2 focus-visible:ring-lime-400"
+        onClick={() => setShowEditor(true)}
+      >
         <span className="text-sm font-medium text-slate-200">Add note</span>
         <p className="text-sm leading-6 text-slate-400">
           Record a audio note that will be transcribed to text automatically.

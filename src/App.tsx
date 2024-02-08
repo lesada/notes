@@ -1,8 +1,22 @@
 import Logo from "@/assets/logo-nlw-expert.svg?react";
 import NewNoteCard from "@/components/NewNoteCard";
 import NoteCard from "@/components/NoteCard";
+import { Note } from "@/interfaces/note";
+import { useState } from "react";
 
 function App() {
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  function onNoteCreated(content: string) {
+    const newNote = {
+      id: crypto.randomUUID(),
+      date: new Date(),
+      content,
+    };
+
+    setNotes((prevNotes) => [newNote, ...prevNotes]);
+  }
+
   return (
     <div className="mx-auto max-w-6xl my-12 space-y-6 px-8">
       <Logo />
@@ -15,13 +29,10 @@ function App() {
       </form>
       <hr className="border-0 h-px bg-slate-700" />
       <div className="grid grid-cols-3 auto-rows-[250px] gap-6">
-        <NewNoteCard />
-        <NoteCard
-          note={{
-            date: new Date(),
-            content: "Hello, World!",
-          }}
-        />
+        <NewNoteCard onNoteCreated={onNoteCreated} />
+        {notes.map((note) => (
+          <NoteCard key={note.id} note={note} />
+        ))}
       </div>
     </div>
   );
