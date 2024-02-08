@@ -7,41 +7,85 @@ interface NewNoteCardProps {
   onNoteCreated: (content: string) => void;
 }
 
+let recognition: SpeechRecognition | null = null;
+
 function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [content, setContent] = useState("");
 
   function handleStartEditor() {
     setShowOnboarding(false);
   }
 
-  function handleContentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    if (event.target.value === "") setShowOnboarding(true);
+  function handleContentChange(newContent: string) {
+    setContent(newContent);
+
+    if (newContent === "") setShowOnboarding(true);
   }
 
   function handleSaveNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const value = event.currentTarget.content?.value;
-
-    if (!value) {
+    if (!content) {
       toast.error("Note content can't be empty!");
       return;
     }
 
-    onNoteCreated(value || "");
+    onNoteCreated(content || "");
 
     toast.success("Note saved successfully!");
 
-    event.currentTarget.reset();
+    setContent("");
     setShowEditor(false);
     setShowOnboarding(true);
   }
 
+  const handleRecording = () => {
+    setIsRecording(true);
+    setShowOnboarding(false);
+
+    const isSpeechRecognitionSupported =
+      "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
+
+    if (!isSpeechRecognitionSupported) {
+      toast.error("Your browser doesn't support speech recognition!");
+      return;
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    recognition = new SpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.maxAlternatives = 1;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event) => {
+      const result = Array.from(event.results).reduce(
+        (text, result) => text.concat(result[0].transcript),
+        ""
+      );
+
+      if (!result) return;
+
+      setContent(result);
+    };
+
+    recognition.onerror = (event) => {
+      console.error(event.error);
+    };
+
+    recognition.start();
+  };
+
   const handleRecordNote = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsRecording(false);
+    recognition?.stop();
   };
 
   return (
@@ -58,10 +102,10 @@ function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
           Record a audio note that will be transcribed to text automatically.
         </p>
       </Dialog.Trigger>
-      <DialogContent>
+      <DialogContent onClose={() => setShowEditor(false)}>
         <form
           className="flex-1 flex flex-col"
-          onSubmit={isRecording ? () => handleRecordNote : handleSaveNote}
+          onSubmit={isRecording ? handleRecordNote : handleSaveNote}
         >
           <div className="flex flex-1 flex-col gap-3 p-5">
             <span className="text-sm font-medium text-slate-200">Add note</span>
@@ -71,7 +115,7 @@ function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
                 <button
                   type="button"
                   className="font-medium text-lime-400 hover:underline"
-                  onClick={() => setIsRecording(true)}
+                  onClick={handleRecording}
                 >
                   recording a new note
                 </button>{" "}
@@ -89,7 +133,8 @@ function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
               <textarea
                 autoFocus
                 className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
-                onChange={handleContentChange}
+                onChange={(event) => handleContentChange(event.target.value)}
+                value={content}
                 name="content"
               />
             )}
