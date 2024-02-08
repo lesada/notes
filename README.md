@@ -2,7 +2,7 @@
 
 ### A simple app to record and write offline notes
 
-![image](https://github.com/lesada/notes/assets/68572174/3a518de7-38f1-432b-ba61-49c9e44b934c)
+![image](https://github.com/lesada/notes/assets/68572174/52806429-775e-4f74-9743-80c933d58353)
 
 
 ## 🧪 Technologies
@@ -25,10 +25,10 @@
 - Run the aplication in dev mode using te command `yarn dev`
 
 
-### Design Inspiration
+## Design Inspiration
 
 [Figma](https://www.figma.com/community/file/1336456128647909148/nlw-expert-notes)
 
-### Others
+## Others
 
 - This project was developed at the Next Level Week - Expert (React Edition)
