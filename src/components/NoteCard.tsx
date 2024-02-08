@@ -34,7 +34,7 @@ function NoteCard({ note }: NoteCardProps) {
           type="button"
           className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none group"
         >
-          Do you want to
+          Do you want to{" "}
           <span className="text-red-400 group-hover:underline">
             delete this note
           </span>
