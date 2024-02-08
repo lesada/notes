@@ -10,6 +10,7 @@ interface NewNoteCardProps {
 function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   function handleStartEditor() {
     setShowOnboarding(false);
@@ -22,7 +23,14 @@ function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   function handleSaveNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    onNoteCreated(event.currentTarget.content?.value || "");
+    const value = event.currentTarget.content?.value;
+
+    if (!value) {
+      toast.error("Note content can't be empty!");
+      return;
+    }
+
+    onNoteCreated(value || "");
 
     toast.success("Note saved successfully!");
 
@@ -30,6 +38,11 @@ function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
     setShowEditor(false);
     setShowOnboarding(true);
   }
+
+  const handleRecordNote = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsRecording(false);
+  };
 
   return (
     <Dialog.Root
@@ -46,17 +59,25 @@ function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
         </p>
       </Dialog.Trigger>
       <DialogContent>
-        <form className="flex-1 flex flex-col" onSubmit={handleSaveNote}>
+        <form
+          className="flex-1 flex flex-col"
+          onSubmit={isRecording ? () => handleRecordNote : handleSaveNote}
+        >
           <div className="flex flex-1 flex-col gap-3 p-5">
             <span className="text-sm font-medium text-slate-200">Add note</span>
             {showOnboarding ? (
               <p className="text-sm leading-6 text-slate-400">
                 Start{" "}
-                <button className="font-medium text-lime-400 hover:underline">
+                <button
+                  type="button"
+                  className="font-medium text-lime-400 hover:underline"
+                  onClick={() => setIsRecording(true)}
+                >
                   recording a new note
                 </button>{" "}
                 or{" "}
                 <button
+                  type="button"
                   className="font-medium text-lime-400 hover:underline"
                   onClick={handleStartEditor}
                 >
@@ -73,12 +94,25 @@ function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
               />
             )}
           </div>
-          <button
-            type="submit"
-            className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
-          >
-            Salvar nota
-          </button>
+          <>
+            {isRecording ? (
+              <button
+                type="submit"
+                className="flex justify-center items-center gap-2 w-full bg-slate-900 py-4 text-center text-sm text-slate-300 outline-none font-medium hover:text-slate-100 animate-pulse"
+              >
+                <div className="size-3 rounded-full bg-red-500" />
+                Recording! (Click to stop)
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                disabled={showOnboarding}
+              >
+                Save note
+              </button>
+            )}
+          </>
         </form>
       </DialogContent>
     </Dialog.Root>
