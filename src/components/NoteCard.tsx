@@ -1,15 +1,14 @@
+import { Note } from "@/interfaces/note";
 import * as Dialog from "@radix-ui/react-dialog";
 import { formatDistanceToNow } from "date-fns";
 import DialogContent from "./DialogContent";
 
 interface NoteCardProps {
-  note: {
-    date: Date;
-    content: string;
-  };
+  note: Note;
+  onNoteDeleted: (id: string) => void;
 }
 
-function NoteCard({ note }: NoteCardProps) {
+function NoteCard({ note, onNoteDeleted }: NoteCardProps) {
   const { date, content } = note;
 
   const formattedDate = formatDistanceToNow(date, { addSuffix: true });
@@ -33,6 +32,7 @@ function NoteCard({ note }: NoteCardProps) {
         <button
           type="button"
           className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none group"
+          onClick={() => onNoteDeleted(note.id)}
         >
           Do you want to{" "}
           <span className="text-red-400 group-hover:underline">

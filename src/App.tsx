@@ -45,6 +45,14 @@ function App() {
     }
   }
 
+  function handleDeleteNote(id: string) {
+    const notesArray = notes.filter((note) => note.id !== id);
+
+    setNotes(notesArray);
+
+    localStorage.setItem("notes", JSON.stringify(notesArray));
+  }
+
   return (
     <div className="mx-auto max-w-6xl my-12 space-y-6 px-8">
       <Logo />
@@ -60,7 +68,11 @@ function App() {
       <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 auto-rows-[250px] gap-6">
         <NewNoteCard onNoteCreated={onNoteCreated} />
         {notes.map((note) => (
-          <NoteCard key={note.id} note={note} />
+          <NoteCard
+            key={note.id}
+            note={note}
+            onNoteDeleted={handleDeleteNote}
+          />
         ))}
       </div>
     </div>
